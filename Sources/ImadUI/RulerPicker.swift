@@ -66,12 +66,13 @@ public struct RulerPicker: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 // Current value display
                 Text(String(format: "%.1fx", selectedValue))
                     .font(.system(size: 34, weight: .medium, design: .rounded))
                     .foregroundColor(majorTickColor)
                     .contentTransition(.numericText())
+                    .padding(.bottom,-10)
                 //.animation(.snappy, value: selectedValue)
                 
                 ZStack(alignment: .top) {

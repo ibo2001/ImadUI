@@ -46,7 +46,13 @@ dependencies: [
 
 var body: some View {
     ...
-    RulerPicker(selectedValue:$selectedValue)
+    RulerPicker(selectedValue:$selectedValue,
+                in range: ClosedRange<Double> = 0.5...3.5,
+                tickPosition:VerticalAlignment = .center,
+                minorTickHeight: CGFloat = 12,
+                tickColor: Color = .secondary,
+                majorTickColor: Color = .primary,
+                indicatorColor: Color = Color(.tintColor)
     ...
 }
 ```

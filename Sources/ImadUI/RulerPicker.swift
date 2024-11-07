@@ -8,12 +8,15 @@ import SwiftUI
 
 public struct RulerPicker: View {
     @Binding var selectedValue: Double
-    let range: ClosedRange<Double> = 0.5...3.5
+    var range: ClosedRange<Double> = 0.5...3.5
+    var tickPosition:VerticalAlignment = .center
+    var minorTickHeight: CGFloat = 12
+    var tickColor: Color = .secondary
+    var majorTickColor: Color = .primary
+    var indicatorColor: Color = Color(.tintColor)
 
-    private let tickCount: Int = 31
     private let tickWidth: CGFloat = 1.5
     private let majorTickHeight: CGFloat = 24
-    private let minorTickHeight: CGFloat = 12
     private let hitArea: CGFloat = 44
     
     @State private var dragOffset: CGFloat = 0
@@ -25,9 +28,40 @@ public struct RulerPicker: View {
     @State private var leadingPadding: CGFloat = 0
     
     // computed variables
-
-    public init(selectedValue: Binding<Double>) {
+    private var tickCount: Int {
+        Int((range.upperBound - range.lowerBound) * 10) + 1
+    }
+    
+    private var linePosition: CGFloat {
+        switch tickPosition {
+        case .top:
+            return -hitArea/3.8
+        case .center:
+            return 0
+        case .bottom:
+            return hitArea/3.8
+        default:
+            return 0
+        }
+    }
+    public init(selectedValue: Binding<Double>,
+                in range: ClosedRange<Double> = 0.5...3.5,
+                tickPosition:VerticalAlignment = .center,
+                minorTickHeight: CGFloat = 12,
+                tickColor: Color = .secondary,
+                majorTickColor: Color = .primary,
+                indicatorColor: Color = Color(.tintColor)) {
         self._selectedValue = selectedValue
+        self.range = range
+        self.tickPosition = tickPosition
+        self.tickColor = tickColor
+        self.majorTickColor = majorTickColor
+        self.indicatorColor = indicatorColor
+        if minorTickHeight > majorTickHeight {
+            self.minorTickHeight = majorTickHeight
+        } else {
+            self.minorTickHeight = minorTickHeight
+        }
     }
     
     public var body: some View {
@@ -36,25 +70,19 @@ public struct RulerPicker: View {
                 // Current value display
                 Text(String(format: "%.1fx", selectedValue))
                     .font(.system(size: 34, weight: .medium, design: .rounded))
-                    .foregroundColor(.primary)
+                    .foregroundColor(majorTickColor)
                     .contentTransition(.numericText())
-                    .animation(.snappy, value: selectedValue)
-                    
+                //.animation(.snappy, value: selectedValue)
+                
                 ZStack(alignment: .top) {
                     // Center indicator
                     VStack(spacing: 0) {
                         Image(systemName: "arrowtriangle.down.fill")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.tint)
-                            .background(
-                                Circle()
-                                    .fill(.background)
-                                    .frame(width: 24, height: 24)
-                                    .shadow(color: .black.opacity(0.1), radius: 1, y: 1)
-                            )
+                            .foregroundStyle(indicatorColor)
                         
                         Rectangle()
-                            .fill(.tint)
+                            .fill(indicatorColor)
                             .frame(width: 2, height: 24)
                     }
                     .zIndex(1)
@@ -64,21 +92,21 @@ public struct RulerPicker: View {
                         // Background line
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundStyle(.secondary.opacity(0.3))
-                        
+                            .foregroundStyle(tickColor.opacity(0.3))
+                            .offset(y:linePosition)
                         // Ticks
-                        HStack(alignment:.center, spacing: tickSpacing) {
+                        HStack(alignment:tickPosition, spacing: tickSpacing) {
                             ForEach(0..<tickCount, id: \.self) { index in
-                                let value = Double(index) * 0.1 + 0.5
+                                let value = range.lowerBound + Double(index) * 0.1
                                 Rectangle()
-                                    .fill(isMainTick(value) ? .primary : .secondary)
+                                    .fill(isMainTick(value) ? majorTickColor : tickColor)
                                     .frame(width: tickWidth, height: isMainTick(value) ? majorTickHeight : minorTickHeight)
                                     .opacity(isMainTick(value) ? 0.8 : 0.3)
                                     .overlay(alignment:.bottom){
                                         if isMainTick(value) {
                                             Text(String(format: "%.1f", value))
                                                 .font(.system(size: 12, weight: .medium))
-                                                .foregroundStyle(.secondary)
+                                                .foregroundStyle(tickColor)
                                                 .frame(width: 30)
                                                 .rotationEffect(.degrees(-90))
                                                 .offset(y: 20)
@@ -110,7 +138,7 @@ public struct RulerPicker: View {
                             }
                     )
                     .onAppear {
-                        leadingPadding = geometry.frame(in: .local).maxX + 45
+                        leadingPadding = geometry.frame(in: .local).maxX + (CGFloat(tickCount - 1) * tickWidth)
                         totalWidth = leadingPadding
                         tickSpacing = geometry.size.width / CGFloat(tickCount - 1)
                         initializePosition()
@@ -158,15 +186,15 @@ public struct RulerPicker: View {
     private func boundedValue(for value: Double) -> Double {
         return min(max(value, range.lowerBound), range.upperBound)
     }
-
+    
     private func calculateProgress(for value: Double, totalWidth: Double) -> Double {
         return value / totalWidth
     }
-
+    
     private func calculateProgress(for value: Double, range: ClosedRange<Double>) -> Double {
         return (value - range.lowerBound) / (range.upperBound - range.lowerBound)
     }
-
+    
 }
 
 // Helper extension for rounding to decimal places

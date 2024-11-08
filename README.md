@@ -5,9 +5,9 @@
 ---
 
 <div align="center">
-    <img src=https://img.shields.io/badge/Swift-5.2-orange.svg>
-    <img src=https://img.shields.io/badge/Platform-iOS_16.1-green.svg>
-    <img src=https://img.shields.io/badge/BETA-0.2.0-red.svg>
+    <img src=https://img.shields.io/badge/Swift-6.0-orange.svg>
+    <img src=https://img.shields.io/badge/Platform-iOS_16.0-green.svg>
+    <img src=https://img.shields.io/badge/Platform-macOS_13.0-green.svg>
 </div>
 <div align="center">
     <a href="">

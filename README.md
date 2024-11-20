@@ -23,8 +23,17 @@
 **ImadUI** is a Swift package containing a SwiftUI controls, for now it just contains a RulerSlider, I will try to
 update it as I can with any UI i think will be usefull to the comunity : <br>
 
+## RulerPicker
+
 <div align="center">
     <img src="https://raw.githubusercontent.com/ibo2001/ImadUI/refs/heads/master/Resources/ImadUIRulerPicker.png" width="400pt">
+</div>
+<br>
+
+## RainbowOverlay
+
+<div align="center">
+    <img src="https://raw.githubusercontent.com/ibo2001/ImadUI/refs/heads/master/Resources/RainbowOverlay.png" width="400pt">
 </div>
 <br>
 
@@ -43,6 +52,7 @@ dependencies: [
 
 ```Swift
 @State private var selectedValue: Double = 1.0
+@State private var isLoading: Bool = true
 
 var body: some View {
     ...
@@ -54,6 +64,17 @@ var body: some View {
                 majorTickColor: Color = .primary,
                 indicatorColor: Color = Color(.tintColor)
     ...
+
+    .overlay{
+            if isLoading {
+                RainbowOverlay(
+                    radius: 70,
+                    rainbowWidth: 50,
+                    blurRadius: 20,
+                    animationDuration: 5
+                )
+            }
+        }
 }
 ```
 

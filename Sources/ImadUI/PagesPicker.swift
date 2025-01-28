@@ -125,7 +125,9 @@ public struct PagesPicker: View {
     private func updateSelectedValue(offset: CGFloat) {
         let progress = -offset / totalWidth
         let newValue = range.lowerBound + Int((Double(range.upperBound - range.lowerBound) * Double(progress)).rounded())
-        selectedValue = min(max(newValue, range.lowerBound), range.upperBound)
+        withAnimation {
+            selectedValue = min(max(newValue, range.lowerBound), range.upperBound)
+        }
     }
     
     private func snapToNearestTick() {

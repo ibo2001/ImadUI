@@ -37,6 +37,12 @@ update it as I can with any UI i think will be usefull to the comunity : <br>
 </div>
 <br>
 
+## PagesPicker
+
+<div align="center">
+    <img src="https://raw.githubusercontent.com/ibo2001/ImadUI/refs/heads/master/Resources/PagesPicker.png" width="400pt">
+</div>
+<br>
 ## Installation
 
 ```Text
@@ -54,8 +60,13 @@ dependencies: [
 @State private var selectedValue: Double = 1.0
 @State private var isLoading: Bool = true
 
+@State private var isLoading: Bool = true
+@State private var selectedPage: Int?
+@State private var text: String = ""
+    
 var body: some View {
     ...
+    // RulerPicker
     RulerPicker(selectedValue:$selectedValue,
                 in range: ClosedRange<Double> = 0.5...3.5,
                 tickPosition:VerticalAlignment = .center,
@@ -63,8 +74,9 @@ var body: some View {
                 tickColor: Color = .secondary,
                 majorTickColor: Color = .primary,
                 indicatorColor: Color = Color(.tintColor)
+    
     ...
-
+    // RainbowOverlay
     .overlay{
             if isLoading {
                 RainbowOverlay(
@@ -75,6 +87,35 @@ var body: some View {
                 )
             }
         }
+    
+    
+    ...
+    // PagesPicker
+    VStack {
+        Text(text)
+            .foregroundColor(.red)
+            .contentTransition(.numericText())
+            .font(.system(size: 20, weight: .bold, design: .default))
+        
+        PagesPicker(selectedValue:$selectedPage,in: 1...604,
+                    pageImage: Image(systemName: "person"),pageFillingColor: .green.opacity(0.2))
+        .frame(height: 40)
+        
+        if let selectedPage {
+            Text(String(format: "%d", selectedPage))
+                .foregroundColor(.red)
+                .contentTransition(.numericText())
+                .font(.system(size: 20, weight: .bold, design: .default))
+        }
+    }
+    .onChange(of: selectedPage) {
+        if let selectedPage {
+            text = String(format: "Page number %d", selectedPage)
+        }
+    }
+    .onAppear {
+        selectedPage = 1
+    }
 }
 ```
 
